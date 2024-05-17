@@ -30,6 +30,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
+import org.pentaho.di.core.Const;
 import org.pentaho.di.core.bowl.DefaultBowl;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.RowSet;
@@ -78,6 +79,8 @@ public class TextFileInputTest {
   @BeforeClass
   public static void initKettle() throws Exception {
     KettleEnvironment.init();
+    System.setProperty( Const.KETTLE_EMPTY_STRING_DIFFERS_FROM_NULL, "Y" );
+    System.setProperty( Const.KETTLE_DO_NOT_NORMALIZE_NULL_STRING_TO_EMPTY, "Y" );
   }
 
   private static BufferedInputStreamReader getInputStreamReader( String data ) throws UnsupportedEncodingException {
@@ -185,7 +188,7 @@ public class TextFileInputTest {
     TextFileInput input = StepMockUtil.getStep( TextFileInput.class, TextFileInputMeta.class, "test" );
     List<Object[]> output = TransTestingUtil.execute( input, meta, data, 2, false );
     TransTestingUtil.assertResult( new Object[] { "1", "1", "1" }, output.get( 0 ) );
-    TransTestingUtil.assertResult( new Object[] { "2", "1", "2" }, output.get( 1 ) );
+    TransTestingUtil.assertResult( new Object[] { "2", "", "2" }, output.get( 1 ) );
 
     deleteVfsFile( virtualFile );
   }
@@ -467,7 +470,7 @@ public class TextFileInputTest {
     TextFileInput input = StepMockUtil.getStep( TextFileInput.class, TextFileInputMeta.class, "test" );
     List<Object[]> output = TransTestingUtil.execute( input, meta, data, 3, false );
     TransTestingUtil.assertResult( new Object[] { "aaa", "\"b\nbb\"", "ccc" }, output.get( 0 ) );
-    TransTestingUtil.assertResult( new Object[] { null }, output.get( 1 ) );
+    TransTestingUtil.assertResult( new Object[] { "" }, output.get( 1 ) );
     TransTestingUtil.assertResult( new Object[] { "zzz", "yyy", "xxx" }, output.get( 2 ) );
 
     deleteVfsFile( virtualFile );

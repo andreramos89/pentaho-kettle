@@ -61,7 +61,7 @@ public class EditRowsDialog_EmptyStringVsNull_Test {
   @Test
   public void emptyAndNullsAreNotDifferent() throws Exception {
     System.setProperty( Const.KETTLE_EMPTY_STRING_DIFFERS_FROM_NULL, "N" );
-    executeAndAssertResults( new String[]{ "", null, null } );
+    executeAndAssertResults( new String[]{ "", "", null } );
   }
 
 
